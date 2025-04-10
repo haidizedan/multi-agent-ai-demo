@@ -1,19 +1,33 @@
 
 import streamlit as st
+import wikipedia
+from PIL import Image
 
-# Simulated agent functions
+# Load logo
+logo = Image.open("A_digital_vector_graphic_logo_features_a_stylized_.png")
+st.image(logo, width=120)
+
+# Agent functions with real API
+
 def agent_1_research(topic):
-    return f"Collected recent and relevant information about '{topic}' from reliable sources."
+    try:
+        summary = wikipedia.summary(topic, sentences=3)
+        return summary
+    except wikipedia.exceptions.DisambiguationError as e:
+        return f"The topic is ambiguous. Please be more specific. Options: {', '.join(e.options[:5])}"
+    except wikipedia.exceptions.PageError:
+        return "No page found for this topic. Try another one."
 
 def agent_2_verify(content):
-    return f"Verified facts and corrected inaccuracies in the following content: {content}"
+    # Simulated verification
+    return f"[Verified]: {content}"
 
 def agent_3_write(verified_content):
-    return f"Final article draft: Based on {verified_content}. Written in a clear, user-friendly style."
+    return f"Final article draft:\n\n{verified_content}\n\nThe article has been revised for clarity and readability."
 
-# Page UI
+# Streamlit UI
 st.title("Multi-Agent AI Workflow Demo")
-st.write("This demo simulates a system where multiple AI agents collaborate to generate an article.")
+st.write("This demo uses real Wikipedia content to simulate a multi-agent AI article generation pipeline.")
 
 topic = st.text_input("Enter a topic for the article:")
 
